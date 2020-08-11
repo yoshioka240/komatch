@@ -1,8 +1,20 @@
+---
 AWSTemplateFormatVersion: "2010-09-09"
+
 Description: Create S3 Bucket
+
+Parameters:
+  Env:
+    Type: String
+    Default: dev
+    Description: Select environment.
+    AllowedValues:
+    - prod
+    - dev
+
 Resources:
   S3:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
-    Properties: 
-      BucketName: komatch-s3-20200807
+    Properties:
+      BucketName: !Sub "${Env}-komatch"
