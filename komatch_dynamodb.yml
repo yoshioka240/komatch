@@ -1,10 +1,22 @@
+---
 AWSTemplateFormatVersion: 2010-09-09
+
 Description: Create DynamoDB Table
+
+Parameters:
+  Env:
+    Type: String
+    Default: dev
+    Description: Select environment.
+    AllowedValues:
+    - prod
+    - dev
+
 Resources:
   KomatchTable:
     Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: KomatchTable
+    Properties:
+      TableName: !Sub "${Env}-komatch"
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -13,17 +25,17 @@ Resources:
         - AttributeName: data_value
           AttributeType: S
       KeySchema:
-        - AttributeName: id  
+        - AttributeName: id
           KeyType: HASH
         - AttributeName: data_type
           KeyType: RANGE
       GlobalSecondaryIndexes:
         - IndexName: GSI1
-          KeySchema: 
+          KeySchema:
             - AttributeName: data_value
               KeyType: HASH
           Projection:
-            ProjectionType: KEYS_ONLY 
+            ProjectionType: KEYS_ONLY
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
