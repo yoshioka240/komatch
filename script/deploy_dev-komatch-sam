@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# 実行ディレクトリの指定
+cd `dirname $0`/../
+
+# SAMデプロイコマンド
+sam deploy \
+  --template-file templates/komatch_sam.yml \
+  --stack-name dev-komatch-sam \
+  --s3-bucket dev-komatch \
+  --confirm-changeset \
+  --capabilities CAPABILITY_NAMED_IAM

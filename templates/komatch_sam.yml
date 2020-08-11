@@ -1,12 +1,31 @@
+---
 AWSTemplateFormatVersion: 2010-09-09
+
 Transform: AWS::Serverless-2016-10-31
+
+Mappings:
+  EnvMap:
+    prod:
+      ApiGatewayModelName: ProdKomatchSchema
+    dev:
+      ApiGatewayModelName: DevKomatchSchema
+
+Parameters:
+  Env:
+    Type: String
+    Default: dev
+    Description: Select environment.
+    AllowedValues:
+    - prod
+    - dev
+
 Resources:
   # API Gateway RestAPI
   ApiGatewayRestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
-      Name: KomatchApi
-      Description: komatch api
+      Name: !Sub "${Env}_KomatchApi"
+      Description: !Sub "${Env} komatch api"
   # API Gateway Deployment
   # it depends on API Gateway Method
   ApiGatewayDeployment:
@@ -21,12 +40,10 @@ Resources:
   ApiGatewayStage:
     Type: AWS::ApiGateway::Stage
     Properties:
-      StageName: dev
-      Description: dev stage
+      StageName: !Sub "${Env}"
+      Description: !Sub "${Env} stage"
       RestApiId:
         Ref: ApiGatewayRestApi
-      Variables:
-        foo: bar
       DeploymentId:
         Ref: ApiGatewayDeployment
   # API Gateway Model
@@ -36,8 +53,8 @@ Resources:
       RestApiId:
         Ref: ApiGatewayRestApi
       ContentType: application/json
-      Description: Schema for Komatch
-      Name: KomatchSchema
+      Description: !Sub "Schema for ${Env} Komatch"
+      Name: !FindInMap [EnvMap, Ref: Env, ApiGatewayModelName]
       Schema:
         $schema: "http://json-schema.org/draft-04/schema#"
         title: PetsModelNoFlatten
@@ -108,18 +125,18 @@ Resources:
       Throttle:
         BurstLimit: 10
         RateLimit: 2
-      Description: komatch api usage plan
-      UsagePlanName: KomatchUsagePlan
+      Description: !Sub "${Env} komatch api usage plan"
+      UsagePlanName: !Sub "${Env}_KomatchUsagePlan"
 
   # Lambda Function
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: Komatch
-      Handler: hoge.handler
+      FunctionName: !Sub "${Env}_Komatch_index"
+      Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7
-      CodeUri: ./komatch_fn
+      CodeUri: ../src
       Role:
         Fn::GetAtt:
           - IAMRole
@@ -186,4 +203,4 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource: "*"
-      RoleName: KomatchLambdaRole2
+      RoleName: !Sub "${Env}_KomatchLambdaRole2"
