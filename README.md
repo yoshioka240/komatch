@@ -1,5 +1,16 @@
-# command to deploy
-`sam deploy --region ap-northeast-1 --stack-name komatch-dev --capabilities CAPABILITY_NAMED_IAM --s3-bucket komatch-s3-20200807`
+# デプロイコマンド
+## dev
+### S3
+`sh script/deploy_dev-komatch-s3`
+### DynamoDB
+`sh script/deploy_dev-komatch-dynamodb`
+### SAM
+`sh script/deploy_dev-komatch-sam`
 
-# command to dynamodb deploy
-`aws cloudformation deploy --template-file komatch_dynamodb.yml --stack-name komatch-dynamodb`
+## prod
+### S3
+`sh script/deploy_prod-komatch-s3`
+### DynamoDB
+`sh script/deploy_prod-komatch-dynamodb`
+### SAM
+`sh script/deploy_prod-komatch-sam`

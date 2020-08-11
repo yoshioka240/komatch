@@ -3,6 +3,13 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: Create DynamoDB Table
 
+Mappings:
+  EnvMap:
+    prod:
+      DynamoDBTableName: ProdKomatch
+    dev:
+      DynamoDBTableName: DevKomatch
+
 Parameters:
   Env:
     Type: String
@@ -16,7 +23,7 @@ Resources:
   KomatchTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub "${Env}-komatch"
+      TableName: !FindInMap [EnvMap, Ref: Env, DynamoDBTableName]
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
