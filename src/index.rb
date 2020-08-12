@@ -6,8 +6,12 @@ ACK = {
 }.freeze
 
 def handler(event:, context:)
-    return { challenge: event['challenge'] } if event['challenge']
+  puts '## Slackの情報'
+  puts event.to_a
 
-    ACK
+  # チャレンジ認証
+  return { challenge: event['challenge'] } if event['challenge']
+
+  # 200ステータスを返す
+  ACK
 end
-
