@@ -21,37 +21,37 @@ Parameters:
 
 Resources:
   # API Gateway RestAPI
-  ApiGatewayRestApi:
+  SlackApiGatewayRestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: !Sub "${Env}_KomatchApi"
       Description: !Sub "${Env} komatch api"
   # API Gateway Deployment
   # it depends on API Gateway Method
-  ApiGatewayDeployment:
+  SlackApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
+    DependsOn: SlackApiGatewayMethod
     Properties:
       RestApiId:
-        Ref: ApiGatewayRestApi
+        Ref: SlackApiGatewayRestApi
       Description: apigateway deployment
   # API Gateway Stage
   # it depends on API Gateway Deployment
-  ApiGatewayStage:
+  SlackApiGatewayStage:
     Type: AWS::ApiGateway::Stage
     Properties:
       StageName: !Sub "${Env}"
       Description: !Sub "${Env} stage"
       RestApiId:
-        Ref: ApiGatewayRestApi
+        Ref: SlackApiGatewayRestApi
       DeploymentId:
-        Ref: ApiGatewayDeployment
+        Ref: SlackApiGatewayDeployment
   # API Gateway Model
-  ApiGatewayModel:
+  SlackApiGatewayModel:
     Type: AWS::ApiGateway::Model
     Properties:
       RestApiId:
-        Ref: ApiGatewayRestApi
+        Ref: SlackApiGatewayRestApi
       ContentType: application/json
       Description: !Sub "Schema for ${Env} Komatch"
       Name: !FindInMap [EnvMap, Ref: Env, ApiGatewayModelName]
@@ -65,24 +65,24 @@ Resources:
           message:
             type: string
   # API Gateway Resource
-  ApiGatewayResource:
+  SlackApiGatewayResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId:
-        Ref: ApiGatewayRestApi
+        Ref: SlackApiGatewayRestApi
       ParentId:
         Fn::GetAtt:
-          - ApiGatewayRestApi
+          - SlackApiGatewayRestApi
           - RootResourceId
       PathPart: komatch
   # API Gateway Method
-  ApiGatewayMethod:
+  SlackApiGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId:
-        Ref: ApiGatewayRestApi
+        Ref: SlackApiGatewayRestApi
       ResourceId:
-        Ref: ApiGatewayResource
+        Ref: SlackApiGatewayResource
       HttpMethod: POST
       AuthorizationType: NONE
       Integration:
@@ -96,7 +96,7 @@ Resources:
               - ":"
               - lambda:path/2015-03-31/functions/
               - Fn::GetAtt:
-                - LambdaFunction
+                - IndexLambdaFunction
                 - Arn
               - /invocations
         IntegrationHttpMethod: POST
@@ -110,15 +110,15 @@ Resources:
           ResponseModels:
             application/json: Empty
   # API Gateway UsagePlan
-  ApiGatewayUsagePlan:
+  SlackApiGatewayUsagePlan:
     Type: AWS::ApiGateway::UsagePlan
     Properties:
       ApiStages:
         -
           ApiId:
-            Ref: ApiGatewayRestApi
+            Ref: SlackApiGatewayRestApi
           Stage:
-            Ref: ApiGatewayStage
+            Ref: SlackApiGatewayStage
       Quota:
         Limit: 100
         Period: DAY
@@ -129,27 +129,27 @@ Resources:
       UsagePlanName: !Sub "${Env}_KomatchUsagePlan"
 
   # Lambda Function
-  LambdaFunction:
+  IndexLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${Env}_Komatch_index"
       Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7
-      CodeUri: ../src
+      CodeUri: ../src/index
       Role:
         Fn::GetAtt:
-          - IAMRole
+          - LambdaIAMRole
           - Arn
       Timeout: 10
   # Lambda Permission
-  LambdaPermission:
+  IndexLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:invokeFunction
       FunctionName:
          Fn::GetAtt:
-          - LambdaFunction
+          - IndexLambdaFunction
           - Arn
       Principal: apigateway.amazonaws.com
       SourceArn:
@@ -161,11 +161,11 @@ Resources:
             - ":"
             - Ref: AWS::AccountId
             - ":"
-            - Ref: ApiGatewayRestApi
+            - Ref: SlackApiGatewayRestApi
             - /*/*/*
 
   # IAM Role
-  IAMRole:
+  LambdaIAMRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -203,4 +203,4 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource: "*"
-      RoleName: !Sub "${Env}_KomatchLambdaRole2"
+      RoleName: !Sub "${Env}_KomatchLambdaRole"
