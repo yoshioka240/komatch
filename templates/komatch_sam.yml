@@ -133,6 +133,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${Env}_Komatch_index"
+      Environment:
+        Variables:
+          env: !Sub "${Env}"
       Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7
@@ -202,5 +205,15 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                Resource: "*"
+        - PolicyName: SystemManagerAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:Describe*
+                  - ssm:Get*
+                  - ssm:List*
                 Resource: "*"
       RoleName: !Sub "${Env}_KomatchLambdaRole"
