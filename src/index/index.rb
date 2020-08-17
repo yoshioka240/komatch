@@ -1,9 +1,9 @@
+require 'aws-sdk'
 require 'json'
-
-ACK = {
-  statusCode: 200,
-  body: JSON.generate('OK')
-}.freeze
+require 'net/http'
+require 'uri'
+require_relative 'constants'
+require_relative 'private_methods'
 
 def handler(event:, context:)
   puts '## Slackの情報'
@@ -11,6 +11,9 @@ def handler(event:, context:)
 
   # チャレンジ認証
   return { challenge: event['challenge'] } if event['challenge']
+
+  # Slack AppのHomeタブの初期表示処理
+  display_home(event['event']['user']) if event['event']['type'].to_s == 'app_home_opened'
 
   # 200ステータスを返す
   ACK
