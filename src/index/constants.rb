@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ### -------- ###
 ### 定数管理 ###
 ### -------- ###
@@ -6,10 +8,10 @@
 ACK = {
   statusCode: 200,
   body: JSON.generate('OK')
-}.freeze
+}
 
 # Slack API URL
-SLACK_API_URL = 'https://slack.com/api'.freeze
+SLACK_API_URL = 'https://slack.com/api'
 
 # Homeタブ初期表示内容
 INITIAL_HOME_VIEW = {
@@ -23,4 +25,4 @@ INITIAL_HOME_VIEW = {
       }
     }
   ]
-}.to_json.freeze
+}.to_json
