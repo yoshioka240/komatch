@@ -36,7 +36,7 @@ def call_post_to_slack(slack_api_method = nil, params = {})
   # POST 実行 準備
   uri = URI.parse(File.join(SLACK_API_URL, slack_api_method))
   http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = uri.scheme === 'https'
+  http.use_ssl = uri.scheme == 'https'
 
   # APIに渡すヘッダー
   header = {
