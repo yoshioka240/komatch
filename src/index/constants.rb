@@ -13,6 +13,11 @@ ACK = {
 # Slack API URL
 SLACK_API_URL = 'https://slack.com/api'
 
+# Slack API Methods
+SLACK_API_METHODS = {
+  views_publish: 'views.publish'
+}
+
 # Homeタブ初期表示内容
 INITIAL_HOME_VIEW = {
   type: 'home',
