@@ -1,8 +1,21 @@
 require 'aws-sdk'
+require_relative 'private_methods'
 
-def handler(event:, _context:)
-  client = Aws::Comprehend::Client.new
-  resp   = client.detect_key_phrases({ text: event['text'], language_code: 'ja' })
+def handler(event:, context:)
+  puts '## キーワード抽出'
 
-  { keywords: resp.key_phrases.map(&:text).uniq }.to_json
+  # textがなかったら空で返す
+  text = event['text']
+  return response_with_keywords([]) if text.empty?
+
+  puts '## 質問原文'
+  puts text
+
+  # キーワード抽出
+  client   = Aws::Comprehend::Client.new
+  resp     = client.detect_key_phrases({ text: text, language_code: 'ja' })
+  keywords = resp.key_phrases.map(&:text).uniq
+
+  # 抽出したキーワードをjsonで返す
+  response_with_keywords(keywords)
 end
