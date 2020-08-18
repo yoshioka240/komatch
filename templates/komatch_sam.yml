@@ -9,6 +9,12 @@ Mappings:
       ApiGatewayModelName: ProdKomatchSchema
     dev:
       ApiGatewayModelName: DevKomatchSchema
+    dev1:
+      ApiGatewayModelName: Dev1KomatchSchema
+    dev2:
+      ApiGatewayModelName: Dev2KomatchSchema
+    dev3:
+      ApiGatewayModelName: Dev3KomatchSchema
 
 Parameters:
   Env:
@@ -18,6 +24,9 @@ Parameters:
     AllowedValues:
     - prod
     - dev
+    - dev1
+    - dev2
+    - dev3
 
 Resources:
   # API Gateway RestAPI
