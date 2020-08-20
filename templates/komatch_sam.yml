@@ -190,27 +190,6 @@ Resources:
           - Arn
       Timeout: 10
 
-  ExtractKeywordsPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:invokeFunction
-      FunctionName:
-         Fn::GetAtt:
-          - ExtractKeywordsFunction
-          - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        Fn::Join:
-          - ""
-          - - arn:aws:execute-api
-            - ":"
-            - Ref: AWS::Region
-            - ":"
-            - Ref: AWS::AccountId
-            - ":"
-            - Ref: SlackApiGatewayRestApi
-            - /*/*/*
-
   RegisterQuestionFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -224,27 +203,6 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
-
-  RegisterQuestionPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:invokeFunction
-      FunctionName:
-         Fn::GetAtt:
-          - RegisterQuestionFunction
-          - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        Fn::Join:
-          - ""
-          - - arn:aws:execute-api
-            - ":"
-            - Ref: AWS::Region
-            - ":"
-            - Ref: AWS::AccountId
-            - ":"
-            - Ref: SlackApiGatewayRestApi
-            - /*/*/*
 
   RecommendUsersFunction:
     Type: AWS::Serverless::Function
@@ -260,27 +218,6 @@ Resources:
           - Arn
       Timeout: 10
 
-  RecommendUsersPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:invokeFunction
-      FunctionName:
-         Fn::GetAtt:
-          - RecommendUsersFunction
-          - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        Fn::Join:
-          - ""
-          - - arn:aws:execute-api
-            - ":"
-            - Ref: AWS::Region
-            - ":"
-            - Ref: AWS::AccountId
-            - ":"
-            - Ref: SlackApiGatewayRestApi
-            - /*/*/*
-
   MessengerFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -294,27 +231,6 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
-
-  MessengerPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:invokeFunction
-      FunctionName:
-         Fn::GetAtt:
-          - MessengerFunction
-          - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        Fn::Join:
-          - ""
-          - - arn:aws:execute-api
-            - ":"
-            - Ref: AWS::Region
-            - ":"
-            - Ref: AWS::AccountId
-            - ":"
-            - Ref: SlackApiGatewayRestApi
-            - /*/*/*
 
   # IAM Role
   LambdaIAMRole:
