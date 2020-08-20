@@ -190,26 +190,47 @@ Resources:
           - Arn
       Timeout: 10
 
-  ExtractKeywordsPermission:
-    Type: AWS::Lambda::Permission
+  RegisterQuestionFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      Action: lambda:invokeFunction
-      FunctionName:
-         Fn::GetAtt:
-          - ExtractKeywordsFunction
+      FunctionName: !Sub "${Env}_Komatch_register_question"
+      Handler: register_question.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/register_question
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
           - Arn
-      Principal: apigateway.amazonaws.com
-      SourceArn:
-        Fn::Join:
-          - ""
-          - - arn:aws:execute-api
-            - ":"
-            - Ref: AWS::Region
-            - ":"
-            - Ref: AWS::AccountId
-            - ":"
-            - Ref: SlackApiGatewayRestApi
-            - /*/*/*
+      Timeout: 10
+
+  RecommendUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_recommend_users"
+      Handler: recommend_users.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/recommend_users
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+
+  MessengerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_messenger"
+      Handler: messenger.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/messenger
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
 
   # IAM Role
   LambdaIAMRole:
