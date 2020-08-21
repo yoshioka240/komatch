@@ -18,4 +18,4 @@ def display_home(user_id)
   puts response.code
   puts '## レスポンス：本文'
   puts response.body
-end  
+end

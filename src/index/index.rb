@@ -1,5 +1,5 @@
 require 'private_methods'
-require 'layer_cunstants'
+require 'layer_constants'
 require 'layer_methods'
 
 def handler(event:, context:)
