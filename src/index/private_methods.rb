@@ -6,10 +6,7 @@ def display_home(user_id)
   slack_api_method = SLACK_API_METHODS[:views_publish]
 
   # APIに渡すパラメータ
-  params = {
-    user_id: user_id,
-    view: INITIAL_HOME_VIEW
-  }
+  params = { user_id: user_id, view: INITIAL_HOME_VIEW }
 
   # Homeタブ表示のAPI実行
   response = call_post_to_slack(slack_api_method, params)

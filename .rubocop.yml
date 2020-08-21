@@ -1,0 +1,10 @@
+Lint/UnusedMethodArgument:
+  # LambdaのHandlerに指定しているメソッドの引数にこれを適用するとlambdaが実行できなくなるため除外
+  Exclude:
+    - src/**/*
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

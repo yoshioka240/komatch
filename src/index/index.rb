@@ -5,7 +5,7 @@ require 'uri'
 require_relative 'constants'
 require_relative 'private_methods'
 
-def handler(event:, _context:)
+def handler(event:, context:)
   puts '## Slackの情報'
   puts event.to_a
 
