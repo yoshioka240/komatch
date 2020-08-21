@@ -208,6 +208,11 @@ Resources:
           DDB_TABLE:
             Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
           env: !Sub "${Env}"
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
 
   RegisterQuestionFunction:
     Type: AWS::Serverless::Function
