@@ -154,6 +154,9 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
+      Layers:
+        - !Ref LibsLayer
+
   # Lambda Permission
   IndexLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -190,6 +193,27 @@ Resources:
           - Arn
       Timeout: 10
 
+  GetUsersLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_get_users"
+      Handler: get_users.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/get_users
+      Layers:
+        - !Ref LibsLayer
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
+          env: !Sub "${Env}"
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+
   RegisterQuestionFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -217,6 +241,18 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
+
+  # Layer
+  LibsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: lib
+      Description: ruby library
+      ContentUri: ../lib/.
+      CompatibleRuntimes:
+        - ruby2.7
+      LicenseInfo: 'MIT'
+      RetentionPolicy: Retain
 
   MessengerFunction:
     Type: AWS::Serverless::Function

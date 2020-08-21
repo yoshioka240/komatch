@@ -58,3 +58,9 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+Outputs:
+  Dynamodb:
+    Value: !Ref KomatchTable
+    Export:
+      Name: !Sub ${Env}-DynamoDBTable
