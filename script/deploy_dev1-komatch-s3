@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# 実行ディレクトリの指定
+cd `dirname $0`/../
+
+# CFnスタック デプロイコマンド
+aws cloudformation deploy \
+  --template-file templates/komatch_s3.yml \
+  --stack-name dev1-komatch-s3 \
+  --parameter-overrides Env=dev1

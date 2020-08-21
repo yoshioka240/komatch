@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# 実行ディレクトリの指定
+cd `dirname $0`/../
+
+# CFnスタック デプロイコマンド
+aws cloudformation deploy \
+  --template-file templates/komatch_dynamodb.yml \
+  --stack-name dev2-komatch-dynamodb \
+  --parameter-overrides Env=dev2

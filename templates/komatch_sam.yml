@@ -9,6 +9,12 @@ Mappings:
       ApiGatewayModelName: ProdKomatchSchema
     dev:
       ApiGatewayModelName: DevKomatchSchema
+    dev1:
+      ApiGatewayModelName: Dev1KomatchSchema
+    dev2:
+      ApiGatewayModelName: Dev2KomatchSchema
+    dev3:
+      ApiGatewayModelName: Dev3KomatchSchema
 
 Parameters:
   Env:
@@ -18,6 +24,9 @@ Parameters:
     AllowedValues:
     - prod
     - dev
+    - dev1
+    - dev2
+    - dev3
 
 Resources:
   # API Gateway RestAPI
@@ -145,6 +154,9 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
+      Layers:
+        - !Ref LibsLayer
+
   # Lambda Permission
   IndexLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -166,6 +178,95 @@ Resources:
             - ":"
             - Ref: SlackApiGatewayRestApi
             - /*/*/*
+
+  ExtractKeywordsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_extract_keywords"
+      Handler: comprehend.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/extract_keywords
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+
+  ExtractKeywordsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+         Fn::GetAtt:
+          - ExtractKeywordsFunction
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - arn:aws:execute-api
+            - ":"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: SlackApiGatewayRestApi
+            - /*/*/*
+
+  GetUsersLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_get_users"
+      Handler: get_users.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/get_users
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+      Layers:
+        - !Ref LibsLayer
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
+          env: !Sub "${Env}"
+
+  GetUsersLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+         Fn::GetAtt:
+          - GetUsersLambdaFunction
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - arn:aws:execute-api
+            - ":"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: SlackApiGatewayRestApi
+            - /*/*/*
+
+  # Layer
+  LibsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: lib
+      Description: ruby library
+      ContentUri: ../lib/.
+      CompatibleRuntimes:
+        - ruby2.7
+      LicenseInfo: 'MIT'
+      RetentionPolicy: Retain
 
   # IAM Role
   LambdaIAMRole:
@@ -215,5 +316,13 @@ Resources:
                   - ssm:Describe*
                   - ssm:Get*
                   - ssm:List*
+                Resource: "*"
+        - PolicyName: ComprehendAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - comprehend:Detect*
                 Resource: "*"
       RoleName: !Sub "${Env}_KomatchLambdaRole"

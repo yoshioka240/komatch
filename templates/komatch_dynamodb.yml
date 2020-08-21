@@ -9,6 +9,12 @@ Mappings:
       DynamoDBTableName: ProdKomatch
     dev:
       DynamoDBTableName: DevKomatch
+    dev1:
+      DynamoDBTableName: Dev1Komatch
+    dev2:
+      DynamoDBTableName: Dev2Komatch
+    dev3:
+      DynamoDBTableName: Dev3Komatch
 
 Parameters:
   Env:
@@ -18,6 +24,9 @@ Parameters:
     AllowedValues:
     - prod
     - dev
+    - dev1
+    - dev2
+    - dev3
 
 Resources:
   KomatchTable:
@@ -49,3 +58,9 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+Outputs:
+  Dynamodb:
+    Value: !Ref KomatchTable
+    Export:
+      Name: !Sub ${Env}-DynamoDBTable
