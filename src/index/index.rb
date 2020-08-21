@@ -1,9 +1,6 @@
-require 'aws-sdk'
-require 'json'
-require 'net/http'
-require 'uri'
-require 'constants'
 require 'private_methods'
+require 'layer_cunstants'
+require 'layer_methods'
 
 def handler(event:, _context:)
   puts '## Slackの情報'

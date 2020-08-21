@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'json'
 
 ### -------- ###
 ### 定数管理 ###
