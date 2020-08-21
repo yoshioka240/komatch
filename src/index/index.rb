@@ -2,7 +2,7 @@ require 'private_methods'
 require 'layer_cunstants'
 require 'layer_methods'
 
-def handler(event:, _context:)
+def handler(event:, context:)
   puts '## Slackの情報'
   puts event.to_a
 
