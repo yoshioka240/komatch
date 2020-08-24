@@ -113,6 +113,8 @@ Resources:
           -
             StatusCode: 200
         PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/x-www-form-urlencoded: "{\n \"body\" : $input.json('$')\n}"
       MethodResponses:
         -
           StatusCode: 200

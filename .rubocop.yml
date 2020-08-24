@@ -8,3 +8,7 @@ Style/AsciiComments:
 
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Style/MethodLength:
+  CountComments: false
+  Max: 15
