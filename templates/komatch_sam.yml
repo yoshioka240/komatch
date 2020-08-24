@@ -215,6 +215,11 @@ Resources:
           - LambdaIAMRole
           - Arn
       Timeout: 10
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(24 hours)
 
   RegisterQuestionFunction:
     Type: AWS::Serverless::Function
