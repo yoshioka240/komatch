@@ -279,9 +279,9 @@ Resources:
         Fn::Sub:
           |-
             {
-              "StartAt": "ExtractKeyword",
+              "StartAt": "ExtractKeywords",
               "States": {
-                "ExtractKeyword": {
+                "ExtractKeywords": {
                   "Type": "Task",
                   "Resource": "${ExtractKeywordsFunction.Arn}",
                   "Next": "RegisterQuestion"
