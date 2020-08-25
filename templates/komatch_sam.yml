@@ -356,6 +356,7 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                  - dynamodb:BatchWriteItem
                 Resource: "*"
         - PolicyName: SystemManagerAccessFromLambda
           PolicyDocument:

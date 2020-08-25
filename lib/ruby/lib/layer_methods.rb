@@ -61,3 +61,20 @@ def put_item(id, data_type, data_value)
     }
   )
 end
+
+# 一度に複数アイテム作成
+def batch_write_item(items)
+  dynamodb.batch_write_item({ request_items: { table_name => items } })
+end
+
+def generate_item_for_batch_write(id, key, value)
+  {
+    put_request: {
+      item: {
+        id: id,
+        data_type: key,
+        data_value: value
+      }
+    }
+  }
+end
