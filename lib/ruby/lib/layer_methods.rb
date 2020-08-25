@@ -29,6 +29,35 @@ def call_post_to_slack(slack_api_method = nil, params = {})
   http.post(uri.path, params.to_json, header)
 end
 
+# DynamoDB関連
+
 def dynamodb
   Aws::DynamoDB::Client.new(region: 'ap-northeast-1')
+end
+
+# テーブル指定
+def table_name
+  @table_name ||= ENV['DDB_TABLE']
+end
+
+# item取得まで
+def get_item(key, data_type)
+  dynamodb.get_item(table_name: table_name, key: { id: key, data_type: data_type }).item
+end
+
+# 要素まで取得する
+def find_by(key, data_type)
+  get_item(key, data_type)&.dig('data_value')
+end
+
+# 要素を1件作成/更新
+def put_item(id, data_type, data_value)
+  dynamodb.put_item(
+    table_name: table_name,
+    item: {
+      id: id,
+      data_type: data_type,
+      data_value: data_value
+    }
+  )
 end
