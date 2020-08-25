@@ -256,6 +256,34 @@ Resources:
           - Arn
       Timeout: 10
 
+  ReceiveReactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_receive_reaction"
+      Handler: receive_reaction.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/receive_reaction
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+
+  SolveQuestionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${Env}_Komatch_solve_question"
+      Handler: solve_question.handler
+      MemorySize: 128
+      Runtime: ruby2.7
+      CodeUri: ../src/solve_question
+      Role:
+        Fn::GetAtt:
+          - LambdaIAMRole
+          - Arn
+      Timeout: 10
+
   # Layer
   LibsLayer:
     Type: AWS::Serverless::LayerVersion
