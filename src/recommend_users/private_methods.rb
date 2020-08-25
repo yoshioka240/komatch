@@ -2,8 +2,8 @@ private
 
 def choose_send_user_ids(question_id)
   # 質問したユーザの取得: 本来は以下のようにかけるが、データがないのでstubする
-  user_id = find_by(question_id, 'UserID')
-  workspace = find_by(user_id, 'WorkspaceID')
+  user_id = find_by(question_id, 'UserId')
+  workspace = find_by(user_id, 'WorkspaceId')
 
   all_user_ids = user_ids_in_workspace(workspace)
   sent_user_ids_json = find_by(question_id, 'SentUserIds')
@@ -16,13 +16,13 @@ def choose_send_user_ids(question_id)
   now_send_user_ids
 end
 
-# WorkspaceIDで絞りこんでscan
+# WorkspaceIdで絞りこんでscan
 def user_ids_in_workspace(workspace)
   dynamodb.scan(
     table_name: table_name,
     scan_filter: {
       id: { attribute_value_list: ['U'], comparison_operator: 'BEGINS_WITH' },
-      data_type: { attribute_value_list: ['WorkspaceID'], comparison_operator: 'EQ' },
+      data_type: { attribute_value_list: ['WorkspaceId'], comparison_operator: 'EQ' },
       data_value: { attribute_value_list: [workspace], comparison_operator: 'EQ' }
     }
   ).items.map { |h| h['id'] }
