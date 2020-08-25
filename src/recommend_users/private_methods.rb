@@ -1,21 +1,12 @@
 private
 
-def table_name
-  @table_name ||= ENV['DDB_TABLE']
-end
-
-# NOTE: DynamoDBのクラスメソッド的なものにできたらいいなあ
-def dynamodb_find_by(key, data_type)
-  dynamodb.get_item(table_name: table_name, key: { id: key, data_type: data_type }).item&.dig('data_value')
-end
-
 def choose_send_user_ids(question_id)
   # 質問したユーザの取得: 本来は以下のようにかけるが、データがないのでstubする
-  user_id = dynamodb_find_by(question_id, 'UserId')
-  workspace = dynamodb_find_by(user_id, 'WorkspaceID')
+  user_id = find_by(question_id, 'UserID')
+  workspace = find_by(user_id, 'WorkspaceID')
 
   all_user_ids = user_ids_in_workspace(workspace)
-  sent_user_ids_json = dynamodb_find_by(question_id, 'SentUserIds')
+  sent_user_ids_json = find_by(question_id, 'SentUserIds')
   sent_user_ids = sent_user_ids_json ? JSON.parse(sent_user_ids_json) : nil
 
   not_sent_user_ids = all_user_ids.reject { |u_id| u_id == user_id || sent_user_ids&.include?(u_id) }
@@ -44,12 +35,5 @@ end
 
 def put_sent_for(question_id, user_ids, sent_user_ids)
   sent_user_ids ||= []
-  dynamodb.put_item(
-    table_name: table_name,
-    item: {
-      id: question_id,
-      data_type: 'SentUserIds',
-      data_value: (user_ids + sent_user_ids).compact.to_json
-    }
-  )
+  put_item(question_id, 'SentUserIds', (user_ids + sent_user_ids).compact.to_json)
 end
