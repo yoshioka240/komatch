@@ -14,7 +14,7 @@ def handler(event:, context:)
   puts '## 質問ID'
   puts question_id
 
-  user_ids = check_not_sent_user_ids(question_id)
+  user_ids = choose_send_user_ids(question_id)
   puts '## 通知を送ったユーザ'
   puts user_ids
 
