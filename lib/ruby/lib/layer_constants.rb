@@ -10,7 +10,7 @@ require 'json'
 ACK = {
   statusCode: 200,
   body: JSON.generate('OK')
-}
+}.freeze
 
 # Slack API URL
 SLACK_API_URL = 'https://slack.com/api'
