@@ -308,6 +308,13 @@ Resources:
         Fn::GetAtt:
           - LambdaIAMRole
           - Arn
+      Layers:
+        - !Ref LibsLayer
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
+          env: !Sub "${Env}"
       Timeout: 10
 
   # StepFunctions
