@@ -151,10 +151,7 @@ Resources:
       MemorySize: 128
       Runtime: ruby2.7
       CodeUri: ../src/index
-      Role:
-        Fn::GetAtt:
-          - LambdaIAMRole
-          - Arn
+      Role: !GetAtt IndexLambdaIAMRole.Arn
       Timeout: 10
       Layers:
         - !Ref LibsLayer
@@ -347,27 +344,35 @@ Resources:
                 "ExtractKeywords": {
                   "Type": "Task",
                   "Resource": "${ExtractKeywordsFunction.Arn}",
+                  "ResultPath":"$.keywords",
+                  "OutputPath": "$",
                   "Next": "RegisterQuestion"
                 },
                 "RegisterQuestion": {
                   "Type": "Task",
                   "Resource": "${RegisterQuestionFunction.Arn}",
+                  "ResultPath":"$.question_id",
+                  "OutputPath": "$",
                   "Next": "RecommendUsers"
                 },
                 "RecommendUsers": {
                   "Type": "Task",
+                  "InputPath":"$.question_id",
                   "Resource": "${RecommendUsersFunction.Arn}",
+                  "ResultPath":"$.user_ids",
+                  "OutputPath": "$",
                   "Next": "Messenger"
                 },
                 "Messenger": {
                   "Type": "Task",
+                  "InputPath":"$.user_ids",
                   "Resource": "${MessengerFunction.Arn}",
                   "End": true
                 }
               }
             }
 
-  # IAM Role
+  # Index Lambda 以外のLambda用の IAM Role
   LambdaIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -425,7 +430,73 @@ Resources:
                 Action:
                   - comprehend:Detect*
                 Resource: "*"
-      RoleName: !Sub "${Env}_KomatchLambdaRole"
+
+  # Index Lambda 用の IAM Role
+  IndexLambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudWatchAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: DynamoDBAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Describe*
+                  - dynamodb:List*
+                  - dynamodb:GetItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:BatchWriteItem
+                Resource: "*"
+        - PolicyName: SystemManagerAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:Describe*
+                  - ssm:Get*
+                  - ssm:List*
+                Resource: "*"
+        - PolicyName: ComprehendAccessFromLambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - comprehend:Detect*
+                Resource: "*"
+        - PolicyName: StartExecution
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - states:StartExecution
+                Resource: "*"
 
   # StepFunctions用のIAMロール
   StatesExecutionRole:

@@ -7,6 +7,7 @@ require_relative 'private_methods'
 
 def handler(event:, context:)
   puts '## ユーザの選定'
+  puts event
 
   question_id = event['question_id']
   return 'error' unless question_id
@@ -19,5 +20,5 @@ def handler(event:, context:)
   puts user_ids
 
   # 質問したユーザの情報を取得
-  { user_ids: user_ids }.to_json
+  { user_ids: user_ids }
 end

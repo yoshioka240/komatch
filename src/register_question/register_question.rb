@@ -4,7 +4,7 @@ require 'layer_methods'
 
 def handler(event:, context:)
   # Featureは配列が入るので処理を分けている
-  string_attrs = { UserId: event['user_id'], Body: event['body'] }
+  string_attrs = { UserId: event['body']['user']['id'], Body: event['text'] }
   array_attrs = { Feature: event['keywords'] }
   id = SecureRandom.alphanumeric(10)
 
@@ -18,6 +18,5 @@ def handler(event:, context:)
     end
   end
 
-  # 200ステータスを返す
-  ACK
+  { question_id: id }
 end
