@@ -229,6 +229,13 @@ Resources:
       MemorySize: 128
       Runtime: ruby2.7
       CodeUri: ../src/register_question
+      Layers:
+        - !Ref LibsLayer
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
+          env: !Sub "${Env}"
       Role:
         Fn::GetAtt:
           - LambdaIAMRole
