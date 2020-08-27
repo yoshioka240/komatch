@@ -3,7 +3,6 @@ require 'layer_methods'
 
 def handler(event:, context:)
   puts '## 質問の通知'
-  puts event['user_ids']
 
   slack_api_method = SLACK_API_METHODS[:post_message]
   event['user_ids'].each do |user_id|

@@ -7,7 +7,6 @@ require_relative 'private_methods'
 
 def handler(event:, context:)
   puts '## ユーザの選定'
-  puts event
 
   question_id = event['question_id']
   return 'error' unless question_id
