@@ -5,7 +5,7 @@ require 'layer_methods'
 def handler(event:, context:)
   # Featureは配列が入るので処理を分けている
   string_attrs = { UserId: event['user_id'], Body: event['body'] }
-  array_attrs = { Feature: event['feature_tag'] }
+  array_attrs = { Feature: event['keywords'] }
   id = SecureRandom.alphanumeric(10)
 
   string_attrs.each do |data_type, data_value|
