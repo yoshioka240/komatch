@@ -23,8 +23,8 @@ def handler(event:, context:)
   render_question_post_modal(body)
 
   # 相談概要投稿受信処理
-  recieve_question_post(body)
+  res = recieve_question_post(body)
 
   # 200ステータスを返す
-  ACK
+  res || ACK
 end

@@ -8,7 +8,7 @@ def display_home(event)
   return unless event['type'].to_s == 'app_home_opened'
 
   # APIリクエストから user_id を取得
-  user_id = event['user_id']
+  user_id = event['user']
 
   # Slack API メソッド
   slack_api_method = SLACK_API_METHODS[:views_publish]

@@ -7,21 +7,72 @@ def recieve_question_post(body)
   return unless body
   return unless body['type'] == 'view_submission'
 
+  user_id, question = parse_body(body)
+
+  # TODO: DynamoDBへの登録
+
+  p '## 相談概要ログ'
+  p '## user_id'
+  p user_id
+  p '## 相談概要'
+  p question
+
+  # 相談概要投稿完了通知
+  notify_post_completion(user_id, question)
+
+  # モーダル削除リクエストをレスポンスとして返却
+  RECEIVED_QUESTION_MODAL
+end
+
+def parse_body(body)
+  # user_id
+  user_id = body['user']['id']
+
+  # question
   block = body['view']['blocks'][0]
   block_id = block['block_id']
   action_id = block['element']['action_id']
   question = body['view']['state']['values'][block_id][action_id]['value']
 
-  # TODO: DynamoDBへの登録
+  [user_id, question]
+end
 
-  # ログ
+def notify_post_completion(user_id, question)
+  p '## 相談概要投稿完了通知'
+  slack_api_method = SLACK_API_METHODS[:post_message]
+  params = {
+    channel: "@#{user_id}",
+    blocks: notify_post_completion_blocks(question)
+  }
+  response = call_post_to_slack(slack_api_method, params)
+
+  # 実行結果ログ
   p '## user_id'
-  p body['user']['id']
-  p '## 相談概要'
-  p question
+  p user_id
+  p '## レスポンス：ステータスコード'
+  p response.code
+  p '## レスポンス：本文'
+  p response.body
+end
 
-  # TODO: 相談概要投稿完了モーダルを表示
-  RECEIVED_QUESTION_MODAL
+def notify_post_completion_blocks(question) # rubocop:disable Metrics/MethodLength
+  [
+    {
+      type: 'section',
+      text: {
+        type: 'plain_text',
+        text: '相談概要の投稿が完了しました！',
+        emoji: true
+      }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: ">#{question}"
+      }
+    }
+  ]
 end
 
 # 相談概要投稿完了モーダル表示内容
@@ -45,9 +96,9 @@ RECEIVED_QUESTION_MODAL =
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '相談概要を投稿しました！'
+            text: '相談概要の投稿が完了しました！'
           }
         }
       ]
     }
-  }.to_json
+  }.freeze
