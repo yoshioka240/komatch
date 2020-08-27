@@ -147,6 +147,7 @@ Resources:
       Environment:
         Variables:
           env: !Sub "${Env}"
+          STEP_FUNCTIONS_ARN: !GetAtt TestStateMachine.Arn
       Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7
