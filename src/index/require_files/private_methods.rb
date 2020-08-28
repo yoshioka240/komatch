@@ -17,3 +17,15 @@ def converted_body(body_str)
   decoded_body = URI.decode_www_form(unescaped_body)
   JSON.parse(decoded_body[0][1])
 end
+
+# 他のLambda実行
+def execute_lambda(function_name: nil, payload: nil)
+  return unless function_name || payload
+
+  Aws::Lambda::Client.new.invoke(
+    {
+      function_name: function_name,
+      payload: payload
+    }
+  )
+end
