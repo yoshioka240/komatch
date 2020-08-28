@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 require 'json'
 
 private
+
+POST_COMPLETION_MESSAGE = '相談概要の投稿が完了しました！'
 
 # 相談概要を受け取る
 def recieve_question_post(body)
@@ -55,7 +59,8 @@ def notify_post_completion(user_id, question)
   slack_api_method = SLACK_API_METHODS[:post_message]
   params = {
     channel: "@#{user_id}",
-    blocks: notify_post_completion_blocks(question)
+    blocks: notify_post_completion_blocks(question),
+    text: POST_COMPLETION_MESSAGE
   }
   response = call_post_to_slack(slack_api_method, params)
 
@@ -74,7 +79,7 @@ def notify_post_completion_blocks(question) # rubocop:disable Metrics/MethodLeng
       type: 'section',
       text: {
         type: 'plain_text',
-        text: '相談概要の投稿が完了しました！',
+        text: POST_COMPLETION_MESSAGE,
         emoji: true
       }
     },

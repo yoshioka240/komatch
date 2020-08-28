@@ -366,7 +366,6 @@ Resources:
                 },
                 "Messenger": {
                   "Type": "Task",
-                  "InputPath":"$.user_ids",
                   "Resource": "${MessengerFunction.Arn}",
                   "End": true
                 }
