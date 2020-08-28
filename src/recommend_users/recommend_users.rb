@@ -19,5 +19,5 @@ def handler(event:, context:)
   puts user_ids
 
   # 質問したユーザの情報を取得
-  { user_ids: user_ids }.to_json
+  { user_ids: user_ids }
 end

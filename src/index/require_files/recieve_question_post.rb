@@ -9,7 +9,7 @@ def recieve_question_post(body)
 
   user_id, question = parse_body(body)
 
-  # TODO: DynamoDBへの登録
+  call_step_functions(body, question)
 
   p '## 相談概要ログ'
   p '## user_id'
@@ -35,6 +35,19 @@ def parse_body(body)
   question = body['view']['state']['values'][block_id][action_id]['value']
 
   [user_id, question]
+end
+
+def call_step_functions(body, question)
+  step_functions.start_execution(
+    {
+      state_machine_arn: ENV['STEP_FUNCTIONS_ARN'],
+      input: { text: question, body: body }.to_json
+    }
+  )
+end
+
+def step_functions
+  Aws::States::Client.new
 end
 
 def notify_post_completion(user_id, question)
