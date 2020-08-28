@@ -457,21 +457,6 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: "*"
-        - PolicyName: DynamoDBAccessFromLambda
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - dynamodb:Describe*
-                  - dynamodb:List*
-                  - dynamodb:GetItem
-                  - dynamodb:Query
-                  - dynamodb:Scan
-                  - dynamodb:PutItem
-                  - dynamodb:UpdateItem
-                  - dynamodb:BatchWriteItem
-                Resource: "*"
         - PolicyName: SystemManagerAccessFromLambda
           PolicyDocument:
             Version: 2012-10-17
@@ -481,14 +466,6 @@ Resources:
                   - ssm:Describe*
                   - ssm:Get*
                   - ssm:List*
-                Resource: "*"
-        - PolicyName: ComprehendAccessFromLambda
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - comprehend:Detect*
                 Resource: "*"
         - PolicyName: StartExecution
           PolicyDocument:

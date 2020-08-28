@@ -37,7 +37,7 @@ def parse_body(body)
   [user_id, question]
 end
 
-def call_step_function(body, question)
+def call_step_functions(body, question)
   step_functions.start_execution(
     {
       state_machine_arn: ENV['STEP_FUNCTIONS_ARN'],

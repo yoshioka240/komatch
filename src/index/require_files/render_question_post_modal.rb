@@ -57,4 +57,4 @@ QUESTION_POST_MODAL_VIEW =
         }
       }
     ]
-  }.to_json
+  }
