@@ -2,7 +2,7 @@ require 'json'
 
 private
 
-# 相談概要を受け取る
+# リアクション受信・通知転送処理を行う
 def receive_reaction(body)
   return unless body
   return unless body['actions']

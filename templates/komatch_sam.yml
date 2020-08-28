@@ -149,6 +149,7 @@ Resources:
           env: !Sub "${Env}"
           STEP_FUNCTIONS_ARN: !GetAtt TestStateMachine.Arn
           RECEIVE_REACTION_FUNCTION_NAME: !Ref ReceiveReactionFunction
+          SOLVE_QUESTION_FUNCTION_NAME: !Ref SolveQuestionFunction
       Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7

@@ -28,6 +28,9 @@ def handler(event:, context:)
   # リアクション受信・通知転送処理
   receive_reaction(body)
 
+  # 相談解決処理
+  solve_question(body)
+
   # 200ステータスを返す
   res || ACK
 end
