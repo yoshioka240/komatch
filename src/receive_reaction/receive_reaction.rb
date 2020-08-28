@@ -9,12 +9,12 @@ def handler(event:, context:)
   puts '## リアクション受信・通知転送処理'
 
   candidate_id = event['candidate_id']
-  question_user_id, question_body = find_question(event)
+  question_id, question_user_id, question_body = find_question(event)
 
   slack_api_method = SLACK_API_METHODS[:post_message]
   params = {
     channel: "@#{question_user_id}",
-    blocks: create_blocks(candidate_id),
+    blocks: create_blocks(question_id, candidate_id),
     text: FOUND_CANDIDATE_MESSAGE
   }
   response = call_post_to_slack(slack_api_method, params)
@@ -42,10 +42,10 @@ def find_question(event)
   question_user_id = find_by(question_id, 'UserId')
   question_body = find_by(question_id, 'Body')
 
-  [question_user_id, question_body]
+  [question_id, question_user_id, question_body]
 end
 
-def create_blocks(candidate_id) # rubocop:disable Metrics/MethodLength
+def create_blocks(question_id, candidate_id) # rubocop:disable Metrics/MethodLength
   message =
     "*#{FOUND_CANDIDATE_MESSAGE}*\n<@#{candidate_id}> さんが相談相手になってくれるようです！連絡を取ってみましょう。"
   [
@@ -66,6 +66,11 @@ def create_blocks(candidate_id) # rubocop:disable Metrics/MethodLength
             emoji: true,
             text: '解決 :grin:'
           },
+          action_id: 'solve_question',
+          value: {
+            question_id: question_id,
+            solver_id: candidate_id
+          }.to_json,
           style: 'primary'
         }
       ]

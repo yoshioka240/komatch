@@ -6,7 +6,7 @@ require_relative 'private_methods'
 def handler(event:, context:)
   p '## 質問の完了'
   question_id = event['question_id']
-  question_body = find_by(question_id, 'body')
+  question_body = find_by(question_id, 'Body')
 
   user_id = find_by(question_id, 'UserId')
   solver_id = event['solver_id']
