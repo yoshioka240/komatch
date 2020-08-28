@@ -7,7 +7,7 @@ private
 POST_COMPLETION_MESSAGE = '相談概要の投稿が完了しました！'
 
 # 相談概要を受け取る
-def recieve_question_post(body)
+def receive_question_post(body)
   return unless body
   return unless body['type'] == 'view_submission'
 

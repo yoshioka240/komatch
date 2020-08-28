@@ -148,6 +148,7 @@ Resources:
         Variables:
           env: !Sub "${Env}"
           STEP_FUNCTIONS_ARN: !GetAtt TestStateMachine.Arn
+          RECEIVE_REACTION_FUNCTION_NAME: !Ref ReceiveReactionFunction
       Handler: index.handler
       MemorySize: 128
       Runtime: ruby2.7
@@ -269,6 +270,13 @@ Resources:
       MemorySize: 128
       Runtime: ruby2.7
       CodeUri: ../src/receive_reaction
+      Layers:
+        - !Ref LibsLayer
+      Environment:
+        Variables:
+          DDB_TABLE:
+            Fn::ImportValue: !Sub "${Env}-DynamoDBTable"
+          env: !Sub "${Env}"
       Role:
         Fn::GetAtt:
           - LambdaIAMRole
@@ -473,6 +481,14 @@ Resources:
               - Effect: Allow
                 Action:
                   - states:StartExecution
+                Resource: "*"
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
                 Resource: "*"
 
   # StepFunctions用のIAMロール
